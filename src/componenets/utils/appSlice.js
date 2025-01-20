@@ -7,6 +7,7 @@ const appslice=createSlice({
         profile:false,
         chanelid:null,
         watch:false,
+        playlist:false
     },
     reducers:{
         tooglemenu:(state,action)=>{
@@ -20,11 +21,14 @@ const appslice=createSlice({
     state.chanelid=action.payload;
  },
  togglewatch:(state,action)=>{
-    state.watch=action.payload;
- }
+   state.watch=action.payload;
+}, playlistplay:(state,action)=>{
+   state.playlist=action.payload;
+}
+
 
  }
 }
 )
-export const{tooglemenu,toogleprofile,togglewatch,changechannelid}=appslice.actions;
+export const{tooglemenu,toogleprofile,togglewatch,changechannelid,playlistplay}=appslice.actions;
 export default appslice.reducer;

@@ -4,6 +4,8 @@ import { fetchVideoDetails } from './fetchVideoDetails';
 import MainVideo from './MainVideo';
 import SideVideo from './SideVideo';
 import { useSelector } from 'react-redux';
+import MainContainer from './MainContainer';
+import VideosContainer from './VideosContainer';
 const Watch = () => {
   const { id } = useParams();
   const [videoDetails, setVideoDetails] = useState(null);
@@ -22,9 +24,9 @@ const Watch = () => {
   console.log(videoDetails);
 
   return (
-<div className={`    flex  h-full   w-full   `} >
+<div className={`    flex  h-full   -ml-12  w-full   `} >
 <div className=' w-[80%]'><MainVideo data={videoDetails}   /></div>
-<div className=' w-[20%]'><SideVideo/></div>
+<div className='       flex flex-wrap w-[30%]     '><SideVideo/></div>
 
 </div> 
 

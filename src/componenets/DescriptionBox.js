@@ -1,41 +1,48 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
-const DescriptionBox = ({channelDetail,data}) => {
+const DescriptionBox = ({ channelDetail, data }) => {
+  const [showAll, setShowAll] = useState(false); 
+  const isDarkMode = useSelector((state) => state.dark.isdark);
 
-    const[more,setmore]=useState(1);
+  const paragraphs = data?.snippet?.localized?.description
+    ?.split("\n")
+    ?.filter((text) => text.trim() !== "") || [];
 
-const DarkMode=useSelector((state)=>state.dark.isdark);
-const paragraphs = data?.snippet?.localized?.description.split('\n').filter((text) => text.trim() !== '');
-console.log(paragraphs);
-    console.log(channelDetail);
-    const moss=paragraphs.length;
-    console.log(data);
   return (
-    <div className={` w-full  flex flex-col  h-full ${DarkMode ? 'bg-slate-800 text-white ' : 'bg-white'}`}>DescriptionBox
-   <div> 
-   <div className={` flex `}>
-<p>{data?.statistics?.viewCount} Views </p>
-<p>{data?.snippet?.publishedAt}</p>
+    <div
+      className={`w-full px-4 py-4 rounded-xl my-3 flex flex-col ${
+        isDarkMode ? "bg-[#3c3c3c] text-white" : "bg-white text-black"
+      }`}
+    >
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-lg font-semibold">Description</p>
+        <div className="text-sm text-gray-500">
+          <p>{data?.statistics?.viewCount} Views</p>
+          <p>{new Date(data?.snippet?.publishedAt).toLocaleDateString()}</p>
+        </div>
+      </div>
 
-<p>{}</p>
-   </div>
- <div className={`${ more<2?' flex':' flex flex-col' }`}  >
- {    paragraphs.slice(0,more).map((text,index)=>
-(<p className= {`  h-full bg-slate-800 ${more<1 ? '  truncate w-[490px]':''}`}    >{text}</p> )
+      <div>
+        {paragraphs
+          .slice(0, showAll ? paragraphs.length : 3) 
+          .map((text, index) => (
+            <p key={index} className="mb-2 text-sm leading-relaxed">
+              {text}
+            </p>
+          ))}
+      </div>
 
-       
-    )
-}
-{ more <2 && <button onClick={ ()=>setmore(paragraphs.length)} className='   text-white'>...more</button>
-}</div>
-  
-
+      {paragraphs.length > 3 && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className="mt-2 text-blue-500 hover:underline self-start"
+        >
+          {showAll ? "Show Less" : "Show More"}
+        </button>
+      )}
     </div>
-   <div>  </div>
-   <div> </div>
-   </div>
-  )
-}
+  );
+};
 
-export default DescriptionBox
+export default DescriptionBox;

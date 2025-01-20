@@ -1,100 +1,155 @@
-import React, { useRef, useState,useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSliders, faSmile } from '@fortawesome/free-solid-svg-icons';
-import { emojis } from './utils/Emojis';
-const HandleUserCommet = ({ totalcomment }) => {
-  const [showcommentbutton, setshowcommentbutton] = useState(null);
+import React, { useRef, useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSmile } from "@fortawesome/free-solid-svg-icons";
+import { emojis } from "./utils/Emojis";
 
-const cardRef=useRef(null);
+const HandleUserCommet = ({ docomment, topcomment, totalcomment }) => {
+  const [showCommentButton, setShowCommentButton] = useState(false);
   const [filter, setFilter] = useState(false);
-  const[showemoji,setshowemoji]=useState(false);
-  const[comment,setcomment]=useState(null);
-  const visiblebutton = async () => {
-    setshowcommentbutton(true);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [comment, setComment] = useState("");
+  const emojiRef = useRef(null);
+
+  const toggleFilter = () => setFilter((prev) => !prev);
+  const toggleEmoji = () => setShowEmoji((prev) => !prev);
+
+  const handleOutsideClick = (event) => {
+    if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+      setShowEmoji(false);
+    }
   };
-const handleemoji=()=>{
-    setshowemoji(true);
-}
 
-// const handleClickOutside = (event) => {
-//     if (cardRef.current && !cardRef.current.contains(event.target)) {
-//         setshowemoji(false);
-//     }
-//   };
-const addemoji=(index)=>{
-    if(comment)
-    setcomment(comment+emojis[index])
- 
- else   setcomment(emojis[index])
+  useEffect(() => {
+    if (showEmoji) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [showEmoji]);
 
-}
-//   useEffect(() => {
-//     document.addEventListener('click', handleClickOutside);
-//     return () => {
-//       document.removeEventListener('click', handleClickOutside);
-//     };
-//   }, []);
-  
-return (
-    <div className="bg-[#212121E6] h-auto border-blue-900 w-full rounded-md flex flex-col justify-between items-center px-8 py-6 relative">
+  const addEmoji = (index) => {
+    setComment((prev) => (prev ? prev + emojis[index] : emojis[index]));
+  };
+
+  const handleCommentSubmit = () => {
+    if (comment.trim() && docomment) {
+      docomment(comment);
+      setComment("");
+      setShowCommentButton(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setComment("");
+    setShowCommentButton(false);
+  };
+
+  return (
+    <div className="bg-black h-auto w-full rounded-md flex flex-col px-8 py-6 relative border border-gray-700 shadow-lg">
+      {/* Comments Header */}
       <div className="flex justify-between items-center w-full mb-4">
-        <p className="text-white text-lg font-semibold">{totalcomment} Comments</p>
-        <FontAwesomeIcon
-          onClick={() => setFilter(!filter)}
-          icon={faSliders}
-          className="text-white cursor-pointer"
-        />
+        <p className="text-white text-lg font-semibold">
+          {totalcomment} Comments
+        </p>
+        <button
+          onClick={toggleFilter}
+          aria-label="Filter comments"
+          className="text-white focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            fill="currentColor"
+          >
+            <path d="M21 6H3V5h18v1zm-6 5H3v1h12v-1zm-6 6H3v1h6v-1z"></path>
+          </svg>
+        </button>
       </div>
 
-      
+      {/* Comment Input */}
       <div className="flex items-center gap-4 w-full">
         <p className="text-white -ml-8 bg-red-600 rounded-full w-8 h-8 flex items-center justify-center text-center text-xs">
           TK
         </p>
-
         <input
           type="text"
-          onClick={visiblebutton}
+          onClick={() => setShowCommentButton(true)}
           value={comment}
-          onChange={(e)=>setcomment(e.target.value)}
-          placeholder="Add a Comment..."
-          className="w-full border-b-2 bg-black text-white text-sm py-2 px-3 focus:outline-none focus:border-blue-500"
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Add a comment..."
+          className="w-full border-b-2 bg-black text-white text-sm py-2 px-3 focus:outline-none focus:border-blue-500 rounded-md"
         />
-
-        <hr className="my-4 border-gray-600" />
       </div>
 
-      {/* Display Cancel and Comment buttons */}
-      {showcommentbutton && (
-        <div className="mt-3 w-full flex   justify-between gap-4">
-<div className=' flex flex-col'>        <button onClick={ handleemoji  }  > <FontAwesomeIcon icon={faSmile } className=' text-white' /> </button>
-{showemoji &&<div  ref={cardRef} className=' z-10  w-80 h-80 overflow-y-scroll    border rounded-md border-slate-600   bg-black'>
-
-   {  emojis.map((emojis,index)=>(
-
-  <button  onClick={()=>addemoji(index)}  className=' font-bold text-2xl gap-7   '>{emojis}   </button>
-
-  
-))}
-
-</div>}
-
-
-</div>
-        <div>
-
-        <button className="rounded-lg text-white px-3 text-sm py-1">Cancel</button>
-        <button className={`rounded-lg    ${comment!=null ? ' bg-blue-600 ':'bg-slate-500'} text-white  opacity-80 py-1 text-sm px-3`}>Comment</button>
-        </div>
+      {/* Emoji Picker and Action Buttons */}
+      {showCommentButton && (
+        <div className="mt-3 w-full flex justify-between gap-4">
+          <div className="relative">
+            <button onClick={toggleEmoji} aria-label="Add emoji">
+              <FontAwesomeIcon
+                icon={faSmile}
+                className="text-white text-lg hover:text-yellow-400 transition duration-300"
+              />
+            </button>
+            {showEmoji && (
+              <div
+                ref={emojiRef}
+                className="absolute top-10 left-0 z-10 w-80 max-h-60 overflow-y-auto border rounded-md border-gray-600 bg-black p-2"
+              >
+                {emojis.map((emoji, index) => (
+                  <button
+                    key={index}
+                    onClick={() => addEmoji(index)}
+                    className="font-bold text-2xl px-2 py-1 hover:bg-gray-700 rounded transition duration-200"
+                    aria-label={`Add emoji ${emoji}`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="rounded-lg bg-red-600 text-white px-3 text-sm py-1 hover:bg-red-700 transition duration-300"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!comment.trim()}
+              className={`rounded-lg text-white px-3 text-sm py-1 ${
+                comment.trim()
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-500 cursor-not-allowed"
+              } transition duration-300`}
+              onClick={handleCommentSubmit}
+            >
+              Comment
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Display sorting options when filter is true */}
+      {/* Filter Options */}
       {filter && (
-        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-black rounded-md p-4 w-80">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-black rounded-md p-4 w-80 border border-gray-600">
           <div className="flex flex-col gap-3">
-            <button className="text-white bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-md">Top Comment</button>
-            <button className="text-white bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-md">Newest</button>
+            <button
+              onClick={topcomment}
+              className="text-white bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-md transition duration-300"
+            >
+              Top Comment
+            </button>
+            <button
+              onClick={() => console.log("Newest clicked")}
+              className="text-white bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-md transition duration-300"
+            >
+              Newest
+            </button>
           </div>
         </div>
       )}

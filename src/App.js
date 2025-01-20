@@ -10,7 +10,7 @@ const AppContent = () => {
   console.log(profile);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
       {/* Header stays at the top */}
       <Header />
       

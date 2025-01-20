@@ -1,28 +1,65 @@
-const ChannelInfo = ({ full, profile, darkMode, setShowMore, setShare }) => {
-    const converttostring = (views) => {
-      if (views >= 1_000_000) return Math.floor(views / 1_000_000) + 'M';
-      if (views >= 1_000) return Math.floor(views / 1_000) + 'K';
-      return views + '';
-    };
-    return (
-      <div className="flex ml-20">
-        <img src={full?.items[0]?.snippet?.thumbnails?.high?.url} className="w-52 h-52 rounded-full" alt="Channel Thumbnail" />
-        <div className="flex flex-col">
-          <p className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
-            {profile?.items[0]?.brandingSettings?.channel?.title}
+import React from "react";
+
+const ChannelInfo = ({ full, profile, darkMode, setShowMore }) => {
+  const convertToString = (views) => {
+    if (views >= 1_000_000) return Math.floor(views / 1_000_000) + "M";
+    if (views >= 1_000) return Math.floor(views / 1_000) + "K";
+    return views + "";
+  };
+
+  return (
+    <div
+      className={`flex items-start space-x-6 p-6 ${
+        darkMode ? "bg-black text-white" : "bg-white text-gray-800"
+      } rounded-lg shadow ml-16`}
+    >
+      {/* Channel Thumbnail */}
+      <img
+        src={full?.items[0]?.snippet?.thumbnails?.default?.url}
+        className="w-28 h-28 rounded-full object-cover shadow-md"
+        alt="Channel Thumbnail"
+      />
+
+      {/* Channel Details */}
+      <div className="flex flex-col space-y-2 w-full">
+        {/* Channel Title */}
+        <p className="text-2xl font-bold truncate">
+          {profile?.items[0]?.brandingSettings?.channel?.title}
+        </p>
+
+        {/* Channel Stats */}
+        <div className="flex items-center space-x-4 text-sm text-gray-500">
+          <p>{full?.items[0]?.snippet?.customUrl}</p>
+          <p>
+            {convertToString(full?.items[0]?.statistics?.subscriberCount)}{" "}
+            subscribers
           </p>
-          <div className="flex">
-            <p   className={`  ${darkMode ? 'text-white' : 'text-black'}`} >{full?.items[0]?.snippet?.customUrl}</p>
-            <p   className={`  ${darkMode ? 'text-white' : 'text-black'}`} >{converttostring(full?.items[0]?.statistics?.subscriberCount)} subscribers</p>
-            <p  className={`  text-sm ${darkMode ? 'text-white' : 'text-black'}`} >{converttostring(full?.items[0]?.statistics?.videoCount)} videos</p>
-          </div>
-         <div className="flex"> <p  className={`   truncate w-80 text-sm ${darkMode ? 'text-white' : 'text-black'}`} >{full?.items[0]?.snippet?.description} </p>
-         <button   className={`  text-sm  ${darkMode ? 'text-white' : 'text-black'}`} onClick={() => setShowMore(true)}>Show More</button></div>
-          <button   className={`  text-sm  ${darkMode ? 'text-white' : 'text-black'}`} onClick={() => setShare(true)}>Share</button>
+          <p>{convertToString(full?.items[0]?.statistics?.videoCount)} videos</p>
+        </div>
+
+        {/* Channel Description */}
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <p className="truncate w-64">{full?.items[0]?.snippet?.description}</p>
+          <button
+            className="hover:underline"
+            onClick={() => setShowMore(true)}
+          >
+            Show More
+          </button>
+        </div>
+
+        {/* Subscribe Button */}
+        <div className="flex space-x-3 mt-4">
+          <button
+            className="px-6 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-700"
+            onClick={() => alert("Subscribed!")}
+          >
+            Subscribe
+          </button>
         </div>
       </div>
-    );
-  };
-  
-  export default ChannelInfo;
-  
+    </div>
+  );
+};
+
+export default ChannelInfo;
